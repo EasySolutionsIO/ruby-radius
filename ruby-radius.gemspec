@@ -3,6 +3,7 @@ Gem::Specification.new do |s|
   s.name        = 'ruby-radius'
   s.version     = 1.0
   s.summary     = ""
+  s.author      = "EasySolutions GmbH"
   s.description = ""
 
   s.required_ruby_version = '>= 1.8.7'
