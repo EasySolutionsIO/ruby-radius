@@ -115,7 +115,9 @@ module Radius
         5  => 'Accounting-Response',
         11 => 'Access-Challenge',
         12 => 'Status-Server',
-        13 => 'Status-Client'
+        13 => 'Status-Client',
+        40 => 'Disconnect-Request',
+        41 => 'Disconnect-ACK',
       }
 
       @code, @identifier, len, @authenticator, attrdat = data.unpack(p_hdr)
@@ -206,7 +208,10 @@ module Radius
         'Accounting-Response' => 5,
         'Access-Challenge' => 11,
         'Status-Server' => 12,
-        'Status-Client' => 13 }
+        'Status-Client' => 13,
+        'Disconnect-Request' => 40,
+        'Disconnect-ACK' => 41
+      }
       attstr = ""
       each {
         |attr, value|
@@ -504,9 +509,13 @@ module Radius
     # ====Return value
     # a new packed packet with the authenticator field recomputed.
     def Packet.auth_resp(packed_packet, secret)
-      new = String.new(packed_packet)
-      new[4, 16] = Digest::MD5.digest(packed_packet + secret)
-      return(new)
+      md5hash = Digest::MD5.digest(packed_packet + secret)
+      counter = 4
+      md5hash.each_char do |char|
+        packed_packet[counter] = char
+        counter += 1
+      end
+      return(packed_packet)
     end
   end
 end
